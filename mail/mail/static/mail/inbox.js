@@ -16,7 +16,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#single-email-view').style.display = 'none';
+  document.querySelector('#specific-email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -41,7 +41,7 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
-  document.querySelector('#single-email-view').style.display = 'none';
+  document.querySelector('#specific-email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -104,7 +104,7 @@ function display_email(number){
 
   document.querySelector('#emails-table').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
-  document.querySelector('#single-email-view').style.display = 'block';
+  document.querySelector('#specific-email-view').style.display = 'block';
   document.querySelector('#emails-view').innerHTML = ``;
 
   fetch(`/emails/${number}`)
@@ -112,11 +112,11 @@ function display_email(number){
   .then(email => processEmail(email));
 
   let processEmail = (email) =>{
-      document.querySelector("#single-email-from").innerHTML=`${email.sender}`;
-      document.querySelector("#single-email-to").innerHTML=`${email.recipients}`;
-      document.querySelector("#single-email-subject").innerHTML=`${email.subject}`;
-      document.querySelector("#single-email-timestamp").innerHTML=`${email.timestamp}`;
-      document.querySelector("#single-email-content").innerHTML=`${email.body}`;
+      document.querySelector("#specific-email-from").innerHTML=`${email.sender}`;
+      document.querySelector("#specific-email-to").innerHTML=`${email.recipients}`;
+      document.querySelector("#specific-email-subject").innerHTML=`${email.subject}`;
+      document.querySelector("#specific-email-timestamp").innerHTML=`${email.timestamp}`;
+      document.querySelector("#specific-email-content").innerHTML=`${email.body}`;
 
       // mark email as read
       fetch(`/emails/${email.id}`, {
@@ -158,9 +158,7 @@ function display_email(number){
         }
       }
 
-      replyButton.addEventListener('click', ()=>reply_email(email));
-
-
+      replyButton.addEventListener('click', ()=>reply_email(email))
 
   }
 }
