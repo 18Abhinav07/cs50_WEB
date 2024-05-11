@@ -9,8 +9,7 @@ from .models import *
 
 
 def index(request):
-    return render(request, "auctions/index.html")
-
+    return redirect('active_listing')
 
 def login_view(request):
     if request.method == "POST":
