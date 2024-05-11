@@ -1,0 +1,36 @@
+Metadata-Version: 2.1
+Name: check50
+Version: 3.3.11
+Summary: This is check50, with which you can check solutions to problems for CS50.
+Home-page: https://github.com/cs50/check50
+Author: CS50
+Author-email: sysadmins@cs50.harvard.edu
+License: GPLv3
+Keywords: check,check50
+Classifier: Intended Audience :: Education
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Education
+Classifier: Topic :: Utilities
+Requires-Python: >= 3.6
+License-File: LICENSE
+Requires-Dist: attrs >=18
+Requires-Dist: beautifulsoup4 >=0
+Requires-Dist: lib50 <4,>=3
+Requires-Dist: packaging
+Requires-Dist: pexpect >=4.6
+Requires-Dist: pyyaml <7,>6
+Requires-Dist: requests >=2.19
+Requires-Dist: setuptools
+Requires-Dist: termcolor >=1.1
+Requires-Dist: jinja2 >=2.10
+Provides-Extra: develop
+Requires-Dist: sphinx ; extra == 'develop'
+Requires-Dist: sphinx-autobuild ; extra == 'develop'
+Requires-Dist: sphinx-rtd-theme ; extra == 'develop'
+
+# check50
+
+check50 is a testing tool for checking student code. As a student you can use check50 to check your CS50 problem sets or any other Problem sets for which check50 checks exist. check50 allows teachers to automatically grade code on correctness and to provide automatic feedback while students are coding.
+
+You can find documentation and instructions for writing your own checks at https://cs50.readthedocs.io/projects/check50/.
+

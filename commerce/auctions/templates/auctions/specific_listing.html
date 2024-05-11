@@ -1,0 +1,154 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div style="height:5rem;"></div>
+    <div class="card-body d-flex flex-column align-items-center">
+        <form action="{% url 'wishlist' pk=listing.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">WatchList</button>
+        </form>
+</div>
+
+<div style="height: 2rem;"></div>
+<div class="card-body d-flex flex-column align-items-center">
+    <h4>Listing Page</h4>
+    <div class="card" style="margin-top:3rem;"><img class="card-img-top w-100 d-block fit-cover" style="height: 200px;"
+            src="{{ listing.image_url }}" />
+        <div class="card-body p-4">
+            <div class="card-title"><a href="{% url 'auction_view' pk=listing.id %}">{{ listing.title }}</a></div>
+            <hr>
+            <p class="card-text">{{ listing.description }}</p>
+            <hr>
+        <div class="card-title"><a href="{% url 'category_listing' cat=listing.category %}">{{ listing.category }}</a></div>
+            <hr>
+            <div class="d-flex">
+                <span>Current price: ${{ listing.current_bid }}</span>
+            </div>
+            <hr>
+            <div class="d-flex">
+                <span>Listed by: {{ listing.created_by }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if listing.created_by == request.user %}
+<hr>
+{% if listing.active %}
+<div class="card-body d-flex flex-column align-items-center">
+    <h4>Close Auction</h4>
+    <div class="card" style="margin-top:3rem; margin-bottom:2rem;">
+        <div class="card-body p-4">
+            <p class="card-text">Starting Bid : ${{ listing.starting_bid }} <br> Current_Bid :
+                ${{ listing.current_bid }}</p>
+        </div>
+    </div>
+    <div>
+        <form action="{% url 'close_auction' pk=listing.id %}">
+             {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Close Auction</button>
+        </form>
+    </div>
+
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    You have closed the auction!
+    <p>The winning bid was ${{ top_bid.bid_amount }} by {{ top_bid.bidder }}</p>
+</div>
+
+{% endif %}
+
+
+{% else %}
+
+    {% if listing.active %}
+    <hr>
+    <div class="card" style="margin-top:3rem; margin-bottom:2rem;">
+        <div class="card-body p-4">
+            <p class="card-text">Starting Bid : ${{ listing.starting_bid }} <br> Current_Bid :
+                ${{ listing.current_bid }}
+                <br> Minimum_Bid :
+                ${{ min_bid }}
+            </p>
+        </div>
+    </div>
+
+    <div style="height:5rem;"></div>
+    <div class="card-body d-flex flex-column align-items-center">
+        <h4 class="card-text">Biding Form</h4>
+        <div style="height: 2rem;"></div>
+        <form action="{% url 'auction_view' pk=listing.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_title" class="form-label"><strong>Biding Amount:</strong></label>
+                </br>
+                {{ bid_form.bid_amount }}
+            </div>
+            <div style="height: 1rem;"></div>
+
+            <button type="submit" class="btn btn-primary" name='bid'>Submit</button>
+        </form>
+    </div>
+
+
+    <hr>
+
+
+    <div style="height:2rem;"></div>
+    <div class="card-body d-flex flex-column align-items-center">
+        <h4 class="card-text">Comments</h4>
+        <div style="height: 2rem;"></div>
+        <form action="{% url 'auction_view' pk=listing.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_title" class="form-label"><strong>Comment:</strong></label>
+                </br>
+                {{ form_comment.content }}
+            </div>
+            <div style="height: 1rem;"></div>
+
+            <button type="submit" class="btn btn-primary" name='comment'>Submit</button>
+        </form>
+    </div>
+
+    <div style="height:2rem;"></div>
+
+    {% else %}
+    <hr>
+    <hr>
+    {% if top_bid.bidder == request.user %}
+    <div class="alert alert-success" role="alert">
+        You have won the auction!
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        You have lost the auction!
+        <p>The winning bid was ${{ top_bid.bid_amount }} by {{ top_bid.bidder }}</p>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+    {% endif %}
+    <hr>
+    <hr>
+    <h5>Recent Comments</h5>
+    
+    {% if not comments %}
+       <h6>No Comment Yet</h6>
+        
+    {% endif %}
+        
+    {% for comm in comments %}  
+    <div class="card" style="margin-top:1rem; margin-bottom:1rem;">
+        <div class="card-body p-4">
+            <p class="card-text">Comment : {{ comm.content }} <br> By : {{ comm.commenter }}
+                <br> On : {{ comm.created_at }}
+            </p>
+        </div>
+    </div>
+    
+        {% endfor %}
+    {% endblock %}
