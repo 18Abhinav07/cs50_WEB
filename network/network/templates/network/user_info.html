@@ -3,7 +3,6 @@
 
 {% block body %}
 
-
 {% if user.is_authenticated %}
 
     {% if request.user == post_user %}
@@ -18,8 +17,6 @@
             {% endif %}
         </button>
     </div>
-
-
     {% endif %}
 
 
@@ -62,8 +59,9 @@
                   <li class="list-group-item card-link">Comment</li>
                 </ul>
                 <div class="card-body d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary like" data-post-id="{{ post.id }}" data-is-liking="{{ is_liking|lower }}" data-is-disliking="{{ is_disliking|lower }}">Like</button>
                   <button type="submit" class="btn btn-primary dislike" data-post-id="{{ post.id }}" data-is-liking="{{ is_liking }}" data-is-disliking="{{ is_disliking }}">Dislike</button>
-                  <button type="submit" class="btn btn-primary like" data-post-id="{{ post.id }}" data-is-liking="{{ is_liking|lower }}" data-is-disliking="{{ is_disliking|lower }}">Like</button>
+                  
                 </div>
               </div>
             </div>
@@ -72,11 +70,15 @@
         {% endfor %}
 
         {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        <div class="card" style="margin-left:3rem">
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary">Previous</a> 
+        </div> 
         {% endif %}
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <div class="card" style="margin-left:3rem">
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">Next</a> 
+        </div> 
         {% endif %}
 
     {% endif %}

@@ -1,37 +1,41 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.core.paginator import Paginator
+from .models import *
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 import json
+from django.core.paginator import Paginator
 
-from .models import User, Post
 
 
 def index(request):
-    posts_per_page = 10
-    post_list = Post.objects.all()
-
-    paginator = Paginator(post_list, posts_per_page)
-    get_page = request.GET.get('p')
-    page_number = get_page if get_page is not None else 1
-    current_page = paginator.get_page(page_number)
-
-    context = {
-        "current_page": current_page,
-        "pagination_needed": paginator.num_pages > 1
-    }
-
     if request.method == "POST":
-        # attempt to send new post
-        post_body = request.POST["post-text"]
+        content = request.POST["content"]
+        user = request.user
+        new_post = Post(user=user, content=content)
+        new_post.save()
+        print(new_post.content)
 
-        if len(post_body) > 0:
-            post = Post(user=request.user, content=post_body)
-            post.save()
+    all_posts = Post.objects.all().order_by('-id')  # Order by the newest post
 
-    return render(request, "network/index.html", context)
+    # Pagination
+    paginator = Paginator(all_posts, 10)  # Show 10 posts per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    likes = []
+    dislikes = []
+
+    for post in page_obj:
+        likes.append(post.likes.count())
+        dislikes.append(post.dislikes.count())
+
+    values = list(zip(page_obj, likes, dislikes))
+
+    return render(request, "network/index.html", {"values": values, "page_obj": page_obj})
 
 
 def login_view(request):
@@ -85,100 +89,117 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-
-def user_view(request, user_name):
-    user_profile = User.objects.get(username=user_name)
-    current_user = request.user
-
-    if request.method == "POST":
-        # check the status
-        status = request.POST['follow-button']
-        if status == 'Unfollow':
-            user_profile.followers.remove(current_user)
-        elif status == 'Follow':
-            user_profile.followers.add(current_user)
-        pass
-
-    # determine follow button visibility
-    follow_button_visibility = request.user.is_authenticated and request.user.username != user_name
-
-    # determine follow button text
-    if current_user in user_profile.followers.all():
-        follow_text = 'Unfollow'
-    else:
-        follow_text = 'Follow'
-
-    # determine followers and follower count
-    followers_count = user_profile.count_followers()
-    following_count = user_profile.count_following()
-
-    context = {
-        'user_name': user_name,
-        'following': following_count,
-        'followers': followers_count,
-        'posts': Post.objects.filter(user__username=user_name),
-        'follow_button_visible': follow_button_visibility,
-        'follow_text': follow_text
-    }
-
-    return render(request, 'network/user_view.html', context)
-
-
+@login_required
 def following(request):
-    followed_users = User.objects.filter(followers=request.user)
-    posts_by_followed = Post.objects.filter(user__in=followed_users)
+    user = request.user
+    following_users = [u for u in User.objects.all() if user in u.followers.all()]
+    following_posts = Post.objects.filter(user__in=following_users).order_by('-id')
 
-    context = {
-        "posts": posts_by_followed
-    }
+    # Pagination
+    paginator = Paginator(following_posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, "network/following.html", context)
+    likes = []
+    dislikes = []
 
+    for post in page_obj:
+        likes.append(post.likes.count())
+        dislikes.append(post.dislikes.count())
 
-def post_edit(request, post_id):
-    if request.method == "POST":
-        # get post with that id
-        post = Post.objects.filter(id=post_id)
+    values = list(zip(page_obj, likes, dislikes))
 
-        # check if that post exist
-        if len(post) == 1:
-            post_to_edit = post[0]
-            read_json = json.loads(request.body)
-            post_to_edit.content = read_json['edited_text']
-            post_to_edit.save()
-            return HttpResponse(200)
-
-    return HttpResponse(404)
+    return render(request, "network/following.html", {"values": values, "page_obj": page_obj})
 
 
-def like_post(request, post_id):
-    if request.method == "POST":
-        # get post with that id
-        post = Post.objects.filter(id=post_id)
+def user_info(request, pk):
+    post = Post.objects.get(id=pk)
+    post_user = User.objects.get(pk=post.user.id)
+    all_posts = Post.objects.filter(user=post_user.id).order_by('-id')
 
-        # check if that post exist
-        if len(post) == 1:
-            post_to_edit = post[0]
-            read_json = json.loads(request.body)
-            # determine if post is to be liked or unlike
-            action = read_json['action']
+    is_following = post_user.followers.filter(pk=request.user.id).exists()
 
-            # check if post is liked by requesting user
-            post_is_liked = request.user in post_to_edit.liked_by.all()
+    # Pagination
+    paginator = Paginator(all_posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-            if action == "like" and not post_is_liked:
-                post_to_edit.liked_by.add(request.user)
-                post_to_edit.save()
-            elif post_is_liked:
-                post_to_edit.liked_by.remove(request.user)
-                post_to_edit.save()
+    likes = []
+    dislikes = []
+    is_liking = []
+    is_disliking = []
 
-            like_count = post_to_edit.count_likes()
-            like_status = request.user in post_to_edit.liked_by.all()
+    for post in page_obj:
+        likes.append(post.likes.count())
+        dislikes.append(post.dislikes.count())
+        is_liking.append(post.likes.filter(pk=request.user.id).exists())
+        is_disliking.append(post.dislikes.filter(pk=request.user.id).exists())
 
-            response = {'like_count': like_count,
-                        'like_status': like_status}
+    values = list(zip(page_obj, likes, dislikes, is_liking,is_disliking))
 
-            return JsonResponse(response)
+    return render(request, "network/user_info.html", {
+        "values": values,
+        "follower_count": post_user.count_followers(),
+        "following_count": post_user.count_following(),
+        "post_user": post_user,
+        "is_following": is_following,
+        "page_obj": page_obj
+    })
+    
+    
+def like(request,pk):
+    post = Post.objects.get(id = pk)
+    if post.dislikes.filter(pk = request.user.id).exists():
+        post.dislikes.remove(request.user)
+    post.likes.add(request.user)
+    post.save()
+    likes = post.likes.count()
+    dislikes = post.dislikes.count()
+    return JsonResponse({"likes":likes,"dislikes":dislikes})
+     
+    
+def dislike(request,pk):
+    post = Post.objects.get(id = pk)
+    if post.likes.filter(pk = request.user.id).exists():
+        post.likes.remove(request.user)
+    post.dislikes.add(request.user)
+    post.save()
+    likes = post.likes.count()
+    dislikes = post.dislikes.count()
+    return JsonResponse({"likes":likes,"dislikes":dislikes})
+    
 
-    return HttpResponse(404)
+def follow(request,pk):
+    user = User.objects.get(id = pk)
+    user.followers.add(request.user)
+    user.save()
+    counts = user.followers.count()
+    return JsonResponse({"followers":counts})
+    
+    
+def unfollow(request,pk):
+    user = User.objects.get(id = pk)
+    user.followers.remove(request.user)
+    user.save()
+    counts = user.followers.count()
+    return JsonResponse({"followers":counts})
+    
+    
+@login_required
+def update_post(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id, user=request.user)
+    except Post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found or unauthorized.'}, status=404)
+
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        new_content = data.get('content')
+        if new_content:
+            post.content = new_content
+            post.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'error': 'No new content provided.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400) 

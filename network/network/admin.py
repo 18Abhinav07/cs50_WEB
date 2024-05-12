@@ -1,10 +1,6 @@
 from django.contrib import admin
-from .models import User, Post
-
-
+from .models import *
 # Register your models here.
-class PostAdmin(admin.ModelAdmin):
-    fields = ["content"]
-
-
-admin.site.register(Post, PostAdmin)
+admin.site.register(Post)
+admin.site.register(Comment)
+admin.site.register(User)
