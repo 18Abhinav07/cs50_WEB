@@ -1,0 +1,205 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+
+{% if user.is_authenticated %}
+
+    {% if request.user == post_user %}
+    {% else %}  
+    <div class="justify-content-centre" style="margin:1rem">
+        <button type="submit" class="btn btn-primary" id="follow-btn" data-user-id="{{ post_user.id }}" 
+        data-is-following="{{ is_following|lower}}">
+            {% if is_following %}
+                Unfollow
+            {% else %}
+                Follow
+            {% endif %}
+        </button>
+    </div>
+
+
+    {% endif %}
+
+
+{% else %}
+    <div class="alert alert-warning" role="alert">
+        You are not logged in. Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'register' %}">register</a>.
+    </div>
+
+{% endif %}
+    <div class="card" style="margin:3rem">
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item fl">Followers: {{ follower_count }}</li>
+                <li class="list-group-item flg">Following: {{ following_count}}</li>
+            </ul>
+        </div>
+    </div>
+<hr>
+
+    {% if values %}
+    <div class="row">
+        {% for val in values %}
+          {% with post=val.0 like=val.1 dislike=val.2 is_liking=val.3 is_disliking=val.4 %}
+            {% if forloop.counter0|divisibleby:1 %}
+              {% if forloop.counter0 > 0 %}</div>{% endif %}
+              <div class="row">
+            {% endif %}
+            <div class="col-md">
+              <div class="card" style="margin:1rem">
+                <div class="card-body">
+                  <a href="{% url 'user_info' pk=post.id %}" class="link-primary link-underline-opacity-0">
+                    <h5 class="card-title"><strong>{{ post.user }}</strong></h5>
+                  </a>
+                  <p class="card-text" style="padding:2rem; border:solid 1px rgb(156, 155, 155); border-radius:10px;">{{ post.content }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">{{ post.timestamp }}</li>
+                  <li class="list-group-item lc">&#10084; {{ like }}</li>
+                  <li class="list-group-item dc">&#128078; {{ dislike }}</li>
+                  <li class="list-group-item card-link">Comment</li>
+                </ul>
+                <div class="card-body d-flex justify-content-between">
+                  <button type="submit" class="btn btn-primary dislike" data-post-id="{{ post.id }}" data-is-liking="{{ is_liking }}" data-is-disliking="{{ is_disliking }}">Dislike</button>
+                  <button type="submit" class="btn btn-primary like" data-post-id="{{ post.id }}" data-is-liking="{{ is_liking|lower }}" data-is-disliking="{{ is_disliking|lower }}">Like</button>
+                </div>
+              </div>
+            </div>
+            {% if forloop.counter|divisibleby:3 or forloop.last %}</div>{% endif %}
+          {% endwith %}
+        {% endfor %}
+
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+
+    {% endif %}
+
+<script>
+try {
+    var likeButtons = document.querySelectorAll(".like");
+    var dislikeButtons = document.querySelectorAll(".dislike");
+    var followBtn = document.querySelector('#follow-btn');
+    var isFollowing = followBtn.getAttribute('data-is-following');
+
+    console.log(unfollowButton)
+    
+} catch(error) {
+    console.log("Error:", error.message);
+}
+try{
+likeButtons.forEach(function(likeButton) {
+    likeButton.addEventListener("click", function () {
+        var postId = likeButton.getAttribute("data-post-id");
+        var csrftoken = getCookie('csrftoken');
+        
+        fetch(`/like/${postId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                likeButton.closest('.card').querySelector(".lc").innerHTML = "&#10084; " + result.likes;
+                likeButton.closest('.card').querySelector(".dc").innerHTML = "&#128078; " + result.dislikes;
+                likeButton.style.display = 'none';
+                likeButton.closest('.card').querySelector(".dislike").style.display = 'flex'
+            });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var likeButtons = document.querySelectorAll('.like');
+    var dislikeButtons = document.querySelectorAll('.dislike');
+
+    likeButtons.forEach(function(likeButton) {
+        var isLiking = likeButton.getAttribute('data-is-liking') === 'true';
+        var isDisliking = likeButton.getAttribute('data-is-disliking') === 'true';
+
+        if (isLiking) {
+            likeButton.style.display = 'none';
+            likeButton.closest('.card-body').querySelector('.dislike').style.display = 'flex';
+        } else if (isDisliking) {
+            likeButton.style.display = 'flex';
+            likeButton.closest('.card-body').querySelector('.dislike').style.display = 'none';
+        } else {
+            likeButton.style.display = 'flex';
+            likeButton.closest('.card-body').querySelector('.dislike').style.display = 'flex';
+        }
+    });
+});
+
+dislikeButtons.forEach(function(dislikeButton) {
+    dislikeButton.addEventListener("click", function () {
+        var postId = dislikeButton.getAttribute("data-post-id");
+        var csrftoken = getCookie('csrftoken');
+
+        fetch(`/dislike/${postId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                dislikeButton.closest('.card').querySelector(".lc").innerHTML = "&#10084; " + result.likes;
+                dislikeButton.closest('.card').querySelector(".dc").innerHTML = "&#128078; " + result.dislikes;
+                dislikeButton.style.display = 'none';
+                dislikeButton.closest('.card').querySelector(".like").style.display = 'flex'
+            });
+    });
+});
+
+followBtn.addEventListener("click", function () {
+        var userId = followBtn.getAttribute("data-user-id");
+        var csrftoken = getCookie('csrftoken');
+        var url = isFollowing ? `/unfollow/${userId}` : `/follow/${userId}`;
+        var method = isFollowing ? "POST" : "POST";
+
+        fetch(url, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                document.querySelector(".fl").innerHTML = "Followers: " + result.followers;
+                isFollowing = !isFollowing;
+                followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
+            });
+})
+}catch(error){
+    console.log("Error:",error.message)
+}
+// Function to get CSRF token from cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+{% endblock %}
