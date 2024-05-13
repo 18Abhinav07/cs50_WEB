@@ -151,6 +151,14 @@ def auction_view(request, pk):
 
             bids = Bid.objects.filter(listing=listing.id).order_by("-bid_amount")
             comments = Comment.objects.filter(listing=listing)
+            
+            auction = AuctionListing.objects.get(pk=pk)
+            if request.user in auction.favoured.all():
+            # User already favoured, unfavourite auction
+                fav = True
+            else:
+            # add auction to favourites
+                fav = False
 
             print("----->", listing)
             return render(
@@ -164,6 +172,7 @@ def auction_view(request, pk):
                     "min_bid": minimum_bid,
                     "bid_form": bid_form,
                     "comments": comments,
+                    "fav":fav,
                 },
             )
     else:

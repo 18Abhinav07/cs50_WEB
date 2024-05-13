@@ -6,7 +6,7 @@
     <div class="card-body d-flex flex-column align-items-center">
         <form action="{% url 'wishlist' pk=listing.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary">WatchList</button>
+            <button type="submit" class="btn btn-primary">{% if fav %}Remove from WatchList{% else %}Add to WatchList{% endif %}</button>
         </form>
 </div>
 
@@ -135,7 +135,7 @@
     <hr>
     <hr>
     <h5>Recent Comments</h5>
-    
+    <div class="container">
     {% if not comments %}
        <h6>No Comment Yet</h6>
         
@@ -151,4 +151,9 @@
     </div>
     
         {% endfor %}
+
+    </div>
+    
     {% endblock %}
+
+    

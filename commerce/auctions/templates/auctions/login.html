@@ -3,7 +3,7 @@
 {% block body %}
 
 
-
+<div style="min-height:80vh">
 {% if message %}
 <div>{{ message }}</div>
 {% endif %}
@@ -24,6 +24,7 @@
     </form>
 
     <span style="margin-top:2rem;">Don't have an account? <a href="{% url 'register' %}">Register here.</a></span>
+</div>
 </div>
 </div>
 

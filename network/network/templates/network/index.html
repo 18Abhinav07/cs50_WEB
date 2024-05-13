@@ -21,11 +21,6 @@
     <div class="alert alert-warning" role="alert">
         You are not logged in. Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'register' %}">register</a>.
     </div>
-    <div class="alert alert-primary" role="alert">
-        There are no posts made. Please<a href="{% url 'login' %}"> log in</a> or <a href="{% url 'register' %}">register</a> to make a post.
-        </div>
-    
-    
         <section class="py-4 py-xl-5">
             <div class="container">
                 <div class="bg-dark border rounded border-0 border-dark overflow-hidden">
@@ -113,7 +108,10 @@
             <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">Next</a> 
         </div> 
         {% endif %}
-       
+       {% else %}
+       <div class="alert alert-primary" role="alert">
+        There are no posts made. Please<a href="{% url 'login' %}"> log in</a> or <a href="{% url 'register' %}">register</a> to make a post.
+        </div>
 {% endif %}
     
   
