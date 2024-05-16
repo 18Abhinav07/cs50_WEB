@@ -1,0 +1,218 @@
+{% extends 'BASE/base.html' %}
+
+{% block content %}
+
+<section class="py-4 py-xl-5">
+    <div class="container">
+        <div class="bg-dark border rounded border-0 border-dark overflow-hidden">
+            <div class="row g-0">
+                <div class="col-md-6">
+                    <div class="text-white p-4 p-md-5">
+                        <h2 class="fw-bold text-white mb-3">For <strong>Student</strong> Entry</h2>
+                        <p class="mb-4">Please Upload The Image File.</p>
+                        <p class="mb-5">Please check the valid input format as .jpg .jpeg .png</p>
+
+                        <form method="POST" enctype="multipart/form-data"
+                            action="{% url 'upload_image' user='guard' %}">
+                            {% csrf_token %}
+                            <label for="imageInput" class="lb"><strong>Please select the image to
+                                    upload.</strong></label>
+                            <input type="file" id="imageInput" name="image" style="display: none;">
+                            <button type="submit" class="btn btn-primary me-2" id="btn">Upload</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-6 order-first order-md-last" style="min-height: 250px;"><img
+                        class="w-100 h-100 fit-cover" id="upload"
+                        src="https://cdn.bootstrapstudio.io/placeholders/1400x800.png" style="width: 1400px; height: 800px;"/></div>
+                </div>
+        </div>
+    </div>
+</section>
+
+{% if data %}
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <p class="text-black-50 mb-5">Face recognition results the following data.</p>
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Batch</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Roll Number</th>
+                            <th scope="col">Branch</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Room Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ data.batch }}</td>
+                            <td>{{ data.name }}</td>
+                            <td>{{ data.roll_no }}</td>
+                            <td>{{ data.branch }}</td>
+                            <td>{{ data.phone }}</td>
+                            <td>{{ data.room_no }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+
+                <h2 class="fw-bold mb-2 text-uppercase">For Institute based entry.</h2>
+                <p class="text-black-50 mb-5">You may fill out the form below for the entry to be made.</p>
+
+                <form method="POST" action="{% url 'add_student_record' %}">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Your Form Has Errors
+                        {% for field in form %}
+                        {% if field.errors %}
+                        {{ field.errors }}
+                        {% endif %}
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    {{ form1.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+
+                <h2 class="fw-bold mb-2 text-uppercase">For Non-Institute based entry.</h2>
+                <p class="text-black-50 mb-5">Please fill out the form below for the entry to be made.</p>
+
+                <form method="POST" action="{% url 'add_non_record' %}">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        Your Form Has Errors
+                        {% for field in form %}
+                        {% if field.errors %}
+                        {{ field.errors }}
+                        {% endif %}
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+
+                    {{ form2.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: rgb(220, 220, 220);
+    }
+
+    .frm {
+        margin-top: 10px;
+        padding: 20px;
+        border-radius: 5px;
+
+    }
+
+    .lb {
+        background-color: #bc2a20;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .glow-on-hover:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .glow-on-hover:active {
+        color: #bfbfbf
+    }
+
+    .glow-on-hover:active:after {
+        background: transparent;
+    }
+
+    .glow-on-hover:hover:before {
+        opacity: 1;
+    }
+
+    .glow-on-hover:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #bfbfbf;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+
+    }
+
+    @keyframes glowing {
+        0% {
+            background-position: 0 0;
+        }
+
+        50% {
+            background-position: 400% 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+</style>
+
+<script>
+
+    let upload = document.getElementById("upload")
+    let input = document.getElementById("imageInput")
+
+    input.onchange = function () {
+        upload.src = URL.createObjectURL(input.files[0])
+    }
+
+</script>
+
+{% endblock %}

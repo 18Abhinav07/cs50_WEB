@@ -1,0 +1,114 @@
+{% extends 'BASE/base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+{% if entries %}
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h3 class="fw-bold mb-2 text-uppercase">Entry records for non-student personnel.</h3>
+                </br>
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Vehicle Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                        <tr>
+                            <td>{{ entry.created_at }}</td>
+                            <td>{{ entry.name }}</td>
+                            <td>{{ entry.reason }}</td>
+                            <td>{{ entry.phone }}</td>
+                            <td>{{ entry.vehicle_no }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <a href="{% url 'login_user' user_group='admin' %}" class="btn btn-primary" role="button">Back to Admin
+            Login</a>
+    </div>
+</div>
+
+
+
+{% endif %}
+{% endif %}
+
+<style>
+    body {
+        background-color: rgb(220, 220, 220);
+    }
+
+    .glow-on-hover:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .glow-on-hover:active {
+        color: #bfbfbf
+    }
+
+    .glow-on-hover:active:after {
+        background: transparent;
+    }
+
+    .glow-on-hover:hover:before {
+        opacity: 1;
+    }
+
+    .glow-on-hover:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #bfbfbf;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+
+    }
+
+    @keyframes glowing {
+        0% {
+            background-position: 0 0;
+        }
+
+        50% {
+            background-position: 400% 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+</style>
+
+{% endblock %}

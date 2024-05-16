@@ -1,0 +1,138 @@
+{% extends 'BASE/base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<section class="vh-100 gradient-custom">
+    <div class="container py-4 py-xl-5 sec">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2><strong>Admin Dashboard</strong></h2>
+                <p class="w-lg-50 lead">You have logged in as an Admin and thus have the functionality listed below
+                    provided to you.</p>
+            </div>
+        </div>
+        <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card glow-on-hover d-flex">
+                    <div class="card-body p-4">
+                        <h4 class="card-title">New User / Update Student</h4>
+                        </br>
+                        <p class="card-text">Create a new admin that can manage the page or create a guard user that
+                            works on the entry. You can also work on student data.</p>
+                        <a href="{% url 'new_user' %}" class="btn btn-primary" role="button">User creation form</a>
+                        <a href="{% url 'student_management' %}" class="btn btn-primary" role="button">Student
+                            Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card glow-on-hover d-flex">
+                    <div class="card-body p-4">
+                        <h4 class="card-title">Student Details / Analytics </h4>
+                        </br>
+
+                        <p class="card-text">Get tabular as well as analytical data for the late entry system for the
+                            students of the institute.</p>
+                        </br>
+                        <a href="{% url 'get_students_data' %}" class="btn btn-primary" role="button">Student
+                            Details</a>
+                        <a href="{% url 'analytics' %}" class="btn btn-primary" role="button">Student
+                            Analytics</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card glow-on-hover d-flex">
+                    <div class="card-body p-4">
+                        <h4 class="card-title">Other Details</h4>
+                        </br>
+                        <p class="card-text">Get tabular data for the late entry system for the
+                            entries made in the institute by people other than the students.</p>
+                        <a href="{% url 'get_details' %}" class="btn btn-primary" role="button">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<style>
+    body {
+        background-color: rgb(236, 236, 236);
+    }
+
+    .card {
+        height: 25vh;
+        border-radius: 10px;
+    }
+
+    .sec {
+        margin-top: 20vh;
+    }
+
+    h4 {
+        font-weight: bold;
+        font-size: medium;
+
+    }
+
+    .glow-on-hover:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .glow-on-hover:active {
+        color: #bfbfbf
+    }
+
+    .glow-on-hover:active:after {
+        background: transparent;
+    }
+
+    .glow-on-hover:hover:before {
+        opacity: 1;
+    }
+
+    .glow-on-hover:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #bfbfbf;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+
+    }
+
+    @keyframes glowing {
+        0% {
+            background-position: 0 0;
+        }
+
+        50% {
+            background-position: 400% 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+</style>
+{% endif %}
+{% endblock %}

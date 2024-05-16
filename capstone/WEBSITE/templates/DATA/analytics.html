@@ -1,0 +1,195 @@
+{% extends 'BASE/base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<style>
+    .pie-chart {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 0 auto;
+        outline: 1px solid #ccc;
+        border-radius: 50%;
+        overflow: hidden;
+        border:rgb(152, 152, 152) 1px solid;
+    }
+
+    .pie-chart span:after {
+        display: inline-block;
+        content: "";
+        width: 0.8em;
+        height: 0.8em;
+        margin-left: 0.4em;
+        height: 0.8em;
+        border-radius: 0.2em;
+        background: currentColor;
+    }
+
+    .concentric-circle {
+        position: absolute;
+        width: calc(2/3 * 300px);
+        height: calc(2/3 * 300px);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 1;
+        background-color: #ffffff;
+        border:rgb(152, 152, 152) 1px solid;
+    }
+</style>
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h2 class="fw-bold mb-2 text-uppercase">Student Analytical Data</h2>
+                </br>
+                </br>
+                <figure class="pie-chart" id="pieChart">
+                    <div class="concentric-circle "></div>
+                </figure>
+                <br><br>
+                <div class="container py-5 h-100">
+                    <div class="row d-flex justify-content-center align-items-center h-100">
+                        <div class="card bg-light text-dark glow-on-hover">
+                            <div class="card-body p-5 text-center">
+                                <p class="fw-bold">Percentage of Students in each year:</p>
+                                <p class="fw-bold">First Year--> <span id="firstYearPercentage" class="fw-bold"
+                                        style="color:#37f17e">..38%..</span></p>
+                                <p class="fw-bold">Second Year--> <span id="secondYearPercentage" class="fw-bold"
+                                        style="color:#f7d448">..23%..</span></p>
+                                <p class="fw-bold">Third Year--> <span id="thirdYearPercentage" class="fw-bold"
+                                        style="color:#9051ee">..16%..</span></p>
+                                <p class="fw-bold">Fourth Year--> <span id="fourthYearPercentage" class="fw-bold"
+                                        style="color:#4df1e3">..10%..</span></p>
+                                <p class="fw-bold">M.Tech--> <span id="mTechPercentage" class="fw-bold"
+                                        style="color:#4962ed">..6%..</span></p>
+                                <p class="fw-bold">PHD--> <span id="phdPercentage" class="fw-bold"
+                                        style="color:#f5573c">..7%..</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</br></br></br>
+
+<style>
+    .card-body {
+        background-color: #fffcfc;
+    }
+
+    .glow-on-hover:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .glow-on-hover:active {
+        color: #bfbfbf
+    }
+
+    .glow-on-hover:active:after {
+        background: transparent;
+    }
+
+    .glow-on-hover:hover:before {
+        opacity: 1;
+    }
+
+    .glow-on-hover:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #bfbfbf;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+    }
+
+    @keyframes glowing {
+        0% {
+            background-position: 0 0;
+        }
+
+        50% {
+            background-position: 400% 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+</style>
+
+<script>
+    // Function to update the pie chart with new data
+    function fetchData() {
+        fetch('{% url "chart_data" %}')
+            .then(response => response.json())
+            .then(data => updatePieChart(data))
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Call the fetchData function to fetch data when the page loads
+    window.onload = fetchData;
+
+    function updatePieChart(data) {
+        var total = Object.values(data).reduce((acc, val) => acc + val, 0);
+        var firstYearPercentage = (data.firstYear / total) * 100;
+        var secondYearPercentage = (data.secondYear / total) * 100;
+        var thirdYearPercentage = (data.thirdYear / total) * 100;
+        var fourthYearPercentage = (data.fourthYear / total) * 100;
+        var mTechPercentage = (data.mTech / total) * 100;
+        var phdPercentage = (data.phd / total) * 100;
+
+        document.getElementById('firstYearPercentage').innerText = firstYearPercentage.toFixed(2);
+        document.getElementById('secondYearPercentage').innerText = secondYearPercentage.toFixed(2);
+        document.getElementById('thirdYearPercentage').innerText = thirdYearPercentage.toFixed(2);
+        document.getElementById('fourthYearPercentage').innerText = fourthYearPercentage.toFixed(2);
+        document.getElementById('mTechPercentage').innerText = mTechPercentage.toFixed(2);
+        document.getElementById('phdPercentage').innerText = phdPercentage.toFixed(2);
+
+        updateConicGradient(firstYearPercentage, secondYearPercentage, thirdYearPercentage, fourthYearPercentage, mTechPercentage, phdPercentage);
+    }
+
+    // Function to update the conic gradient based on new percentages
+    function updateConicGradient(firstYear, secondYear, thirdYear, fourthYear, mTech, phd) {
+        var conicGradient = `conic-gradient(
+        #37f17e 0 ${firstYear}%,
+        #f7d448 0 ${(firstYear + secondYear)}%,
+        #9051ee 0 ${(firstYear + secondYear + thirdYear)}%,
+        #4df1e3 0 ${(firstYear + secondYear + thirdYear + fourthYear)}%,
+        #4962ed 0 ${(firstYear + secondYear + thirdYear + fourthYear + mTech)}%,
+        #f5573c 0 100%
+    )`;
+        document.getElementById('pieChart').style.background = conicGradient;
+    }
+
+    // Update the pie chart with the example data
+    // updatePieChart(data); // Removed as it's called after fetching data
+
+</script>
+
+{% endif %}
+
+{% endblock %}

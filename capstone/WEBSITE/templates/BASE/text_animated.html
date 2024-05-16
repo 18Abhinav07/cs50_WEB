@@ -1,0 +1,67 @@
+<div class="c" >
+  <video class="bg-video" autoplay loop>
+    <source src="https://imgur.com/2cSaKIt.mp4" type="video/mp4" />
+  </video>
+  <p class="text">ENTRY MANAGEMENT SYSTEM</p>
+ 
+</div>
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.c {
+  background-color:rgb(0, 0, 0);
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.c > .bg-video {
+  width: 100vw;
+  height: 90vh;
+}
+
+.c > .text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 90px;
+  font-family: sans-serif;
+  mix-blend-mode: multiply;
+  user-select: none;
+}
+
+.c.hidden {
+  opacity: 0;
+}
+
+</style>
+
+<script>
+
+const div = document.querySelector('.c');
+
+function hideDiv() {
+  div.classList.add('hidden'); 
+  setTimeout(() => {
+    div.style.display = 'none';
+  }, 1000);
+}
+
+setTimeout(hideDiv, 4000);
+
+  
+</script>
+

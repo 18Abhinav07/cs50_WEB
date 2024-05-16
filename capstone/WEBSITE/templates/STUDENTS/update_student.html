@@ -1,0 +1,249 @@
+{% extends 'BASE/base.html' %}
+{% block content %}
+
+{% if entries %}
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h3 class="fw-bold mb-2 text-uppercase">Records for student with roll number: {{roll}}</h3>
+                </br>
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Roll Number</th>
+                            <th scope="col">Branch</th>
+                            <th scope="col">Batch</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Room Number</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                        <tr>
+                            <td>{{ entry.name }}</td>
+                            <td>{{ entry.roll_no }}</td>
+                            <td>{{ entry.branch }}</td>
+                            <td>{{ entry.batch }}</td>
+                            <td>{{ entry.phone }}</td>
+                            <td>{{ entry.email}}</td>
+                            <td>{{ entry.room_no}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h3 class="fw-bold mb-2 text-uppercase"> Update Records for student with roll number: {{roll}}</h3>
+                </br>
+                <form method="POST" action="{% url 'update_student_details' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="name" placeholder="Name">
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" class="form-control" name="roll_no" placeholder="Roll Number">
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select" name="batch" placeholder="Batch">
+                            <option value="" disabled selected hidden>Choose a batch</option>
+                            <option value="First Year">First Year</option>
+                            <option value="Second Year">Second Year</option>
+                            <option value="Third Year">Third Year</option>
+                            <option value="Fourth Year">Fourth Year</option>
+                            <option value="M.Tech">M.Tech</option>
+                            <option value="PHD">PHD</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select" name="branch" placeholder="Branch">
+                            <option value="" disabled selected hidden>Choose a Branch</option>
+                            <option value="CSE">CSE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="HSS">HSS /(only for M.Tech and Phd)
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="phone" placeholder="Phone">
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" class="form-control" name="room_no" placeholder="Room Number">
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" name="email" placeholder="Email">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <a href="{% url 'student_management' %}" class="btn btn-primary" role="button">Back to Student Dashboard</a>
+</div>
+<br>
+
+{% endif %}
+
+{% if entries0 %}
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h3 class="fw-bold mb-2 text-uppercase"> Old Records for student with roll number: {{roll}}</h3>
+                </br>
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Roll Number</th>
+                            <th scope="col">Branch</th>
+                            <th scope="col">Batch</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Room Number</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ entries0.name }}</td>
+                            <td>{{ entries0.roll_no }}</td>
+                            <td>{{ entries0.branch }}</td>
+                            <td>{{ entries0.batch }}</td>
+                            <td>{{ entries0.phone }}</td>
+                            <td>{{ entries0.email}}</td>
+                            <td>{{ entries0.room_no}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if entries1 %}
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h3 class="fw-bold mb-2 text-uppercase">Updated Records for student with roll number: {{roll}}</h3>
+                </br>
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Roll Number</th>
+                            <th scope="col">Branch</th>
+                            <th scope="col">Batch</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Room Number</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries1 %}
+                        <tr>
+                            <td>{{ entry.name }}</td>
+                            <td>{{ entry.roll_no }}</td>
+                            <td>{{ entry.branch }}</td>
+                            <td>{{ entry.batch }}</td>
+                            <td>{{ entry.phone }}</td>
+                            <td>{{ entry.email}}</td>
+                            <td>{{ entry.room_no}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <a href="{% url 'update_student' %}" class="btn btn-primary" role="button">Back to Student Update Form</a>
+</div>
+{% endif %}
+{% endif %}
+
+
+<style>
+    body {
+        background-color: rgb(220, 220, 220);
+    }
+
+    .glow-on-hover:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .glow-on-hover:active {
+        color: #bfbfbf
+    }
+
+    .glow-on-hover:active:after {
+        background: transparent;
+    }
+
+    .glow-on-hover:hover:before {
+        opacity: 1;
+    }
+
+    .glow-on-hover:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #bfbfbf;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+
+    }
+
+    @keyframes glowing {
+        0% {
+            background-position: 0 0;
+        }
+
+        50% {
+            background-position: 400% 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+</style>
+
+
+{% endblock %}

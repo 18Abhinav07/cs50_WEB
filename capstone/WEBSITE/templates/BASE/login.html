@@ -1,0 +1,135 @@
+{% extends 'BASE/base.html' %}
+
+
+{% block content %}
+
+{% if user_group == 'admin' %}
+
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 ">
+          <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+
+                <h2 class="fw-bold mb-2 text-uppercase">Admin Login</h2>
+                <p class="text-black-50 mb-5">Please enter your username and password!</p>
+
+                <form method="POST" action="{% url 'login_user' user_group='admin' %}">
+                  {% csrf_token %}
+
+                  <div class="mb-3">
+                    <input type="text" class="form-control" name="username" placeholder="Username" required>
+                    </div>
+                  <div class="mb-3">
+                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Log-in</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+
+
+{% elif user_group == 'guard' %}
+
+<section class="vh-100 gradient-custom">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5 ">
+        <div class="card bg-light text-dark glow-on-hover" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+
+            <h2 class="fw-bold mb-2 text-uppercase">Guard Login</h2>
+            <p class="text-black-50 mb-5">Please enter your username and password!</p>
+
+            <form method="POST" action="{% url 'login_user' user_group='guard' %}">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
+              </div>
+              <div class="mb-3">
+                <input type="password" class="form-control" name="password" placeholder="Password" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Log-in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endif %}
+<style>
+  body{
+  background-color: rgb(236, 236, 236);
+}
+
+
+.glow-on-hover:before {
+        content: '';
+        background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        background-size: 400%;
+        z-index: -1;
+        filter: blur(5px);
+        width: calc(100% + 4px);
+        height: calc(100% + 4px);
+        animation: glowing 20s linear infinite;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .glow-on-hover:active {
+        color: #bfbfbf
+    }
+
+    .glow-on-hover:active:after {
+        background: transparent;
+    }
+
+    .glow-on-hover:hover:before {
+        opacity: 1;
+    }
+
+    .glow-on-hover:after {
+        z-index: -1;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #bfbfbf;
+        left: 0;
+        top: 0;
+        border-radius: 10px;
+
+    }
+
+    @keyframes glowing {
+        0% {
+            background-position: 0 0;
+        }
+
+        50% {
+            background-position: 400% 0;
+        }
+
+        100% {
+            background-position: 0 0;
+        }
+    }
+</style>
+
+
+{% endblock %}
+
+
+{# everything written between these blocks will be placed between the blocks in the base file as the base file is like a
+template that all the other files will use. #}
